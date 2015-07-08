@@ -1,0 +1,92 @@
+{% extends 'base.html' %} {% load static %} {% block body %} {% verbatim %}
+<div class="container">
+	<div class="row header-section">
+		<h1>Give me something to read!</h1>
+	</div>
+	<div class="vertical-center">
+		<div class="row">
+			<div class="loader" ng-show="loading" class="hide-fade">
+				<p>Finding you a good read ...</p>
+				<div class="loading">
+					<div class="l1"></div>
+					<div class="l2"></div>
+					<div class="l3"></div>
+				</div>
+			</div>
+		</div>
+		<div on-book-change="animateTrigger">
+			<div ng-hide="loading || isListEmpty || isError" class="hide-fade">
+				<div class="row">
+					<h3>{{suggestion}}</h3>
+					<div class="relative-container">
+						<h1 ng-show="book.amazon_product_url">
+							<a href="{{book.amazon_product_url}}" target="_blank">{{book.title}}</a>
+						</h1>
+						<h1 ng-hide="book.amazon_product_url">{{book.title}}</h1>
+					</div>
+					<h3>{{book.contributor}}</h3>
+				</div>
+				<div class="row">
+					<img ng-show="book.book_image" ng-src="{{book.book_image}}" alt="" id="bookimg" class="book-img loading-img">{% endverbatim %}
+					<img ng-hide="book.book_image" src="{% static 'img/default-book-cover.png' %}" alt="" class="book-img">{% verbatim %}</div>
+				<div class="row">
+					<h4>{{book.description}}</h4>
+					<buton class="btn btn-primary" ng-click="triggerNext()">{{next}}</buton>
+				</div>
+				<div class="row footer-section">
+					<h4>browsing
+						<a href="javascript:;" data-toggle="modal" data-target="#categories">{{displayedCategoryName}}</a>
+					</h4>
+				</div>
+			</div>
+			<div class="row" ng-show="!loading && !isError && isListEmpty" class="hide-fade">
+				<h1>Bummer ... nothing to suggest</h1>
+				<h3>Maybe some other
+					<a href="javascript:;" data-toggle="modal" data-target="#categories">category?</a>
+				</h3>
+			</div>
+			<div class="row" ng-show="!loading && isError" class="hide-fade">
+				<h1>This is kind of embarrassing ... something is broken</h1>
+				<p class="lead">Please try again</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="categories" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h2 class="modal-title" id="myModalLabel">Categories</h2>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-6">
+							<div ng-repeat="cat in categoriesLeft">
+								<h5>
+									<input type="radio" ng-model="$parent.displayedCategoryEncoded" value="{{cat.list_name_encoded}}" name="categories" />&nbsp {{cat.display_name}}</h5>
+							</div>
+						</div>
+						<div ng-repeat="cat in categoriesRight">
+							<h5>
+								<input type="radio" ng-model="$parent.displayedCategoryEncoded" value="{{cat.list_name_encoded}}" name="categories" />&nbsp {{cat.display_name}}</h5>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" data-dismiss="modal" ng-click="reloadBooks(displayedCategoryEncoded)">Load</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>{% endverbatim %} {% endblock %} {% block scripts %}
+<script type="text/javascript">
+	$(document).ready(function () {
+	        $('a').click(function () {
+	            this.blur();
+	        });
+	    });
+</script>{% endblock %}
